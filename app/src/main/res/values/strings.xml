@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Droplet</string>
+    <string name="welcome_title">Welcome to Droplet</string>
+    <string name="continue_text">Continue</string>
+    <string name="login_canceled">Login canceled</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="login_failed">Login failed</string>
 </resources>
