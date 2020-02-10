@@ -8,6 +8,8 @@ import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
@@ -19,13 +21,15 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class DetailsActivity : AppCompatActivity() {
 
     private val viewModel: DetailsViewModel by viewModel()
+    private var userId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details)
         pick_avatar_image_view.setOnClickListener { pickImage() }
+        save_button.setOnClickListener { updateUser() }
         observeViewModel()
-        val userId = intent.getStringExtra(EXTRA_USER_ID) ?: ""
+        userId = intent.getStringExtra(EXTRA_USER_ID) ?: ""
         viewModel.getUser(userId)
     }
 
@@ -37,6 +41,22 @@ class DetailsActivity : AppCompatActivity() {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_IMAGE)
     }
 
+    private fun updateUser() {
+        val defaultBitmap = ContextCompat.getDrawable(this, R.drawable.layer_list_add_photo)
+            ?.toBitmap()!!
+        val currentBitmap = pick_avatar_image_view.drawable.toBitmap()
+        // Avoid sending the default bitmap to server
+        val bitmap = if (defaultBitmap.sameAs(currentBitmap)) null else currentBitmap
+        val detailsUser = DetailsUser(
+            id = userId,
+            avatar = bitmap,
+            firstName = first_name_edit_text.text.toString(),
+            lastName = last_name_edit_text.text.toString(),
+            email = email_edit_text.text.toString()
+        )
+        viewModel.updateUser(detailsUser)
+    }
+
     private fun observeViewModel() {
         val owner = this@DetailsActivity
         viewModel.run {
@@ -44,6 +64,9 @@ class DetailsActivity : AppCompatActivity() {
             loading.observe(owner, Observer { toggleLoading(it) })
             message.observe(owner, Observer { showMessage(it) })
             bitmap.observe(owner, Observer { loadImage(it) })
+            invalidFirstName.observe(owner, Observer { showFirstNameError() })
+            invalidLastName.observe(owner, Observer { showLastNameError() })
+            invalidEmailName.observe(owner, Observer { showEmailError() })
         }
     }
 
@@ -56,6 +79,7 @@ class DetailsActivity : AppCompatActivity() {
 
     private fun toggleLoading(isEnabled: Boolean) {
         progress_bar.isVisible = isEnabled
+        save_button.isEnabled = !isEnabled
     }
 
     private fun showMessage(@StringRes stringRes: Int) {
@@ -68,6 +92,18 @@ class DetailsActivity : AppCompatActivity() {
             .load(bitmap)
             .circleCrop()
             .into(pick_avatar_image_view)
+    }
+
+    private fun showFirstNameError() {
+        first_name_edit_text.error = getString(R.string.invalid_first_name)
+    }
+
+    private fun showLastNameError() {
+        last_name_edit_text.error = getString(R.string.invalid_last_name)
+    }
+
+    private fun showEmailError() {
+        email_edit_text.error = getString(R.string.invalid_email)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -9,5 +9,5 @@ interface ImageEncoder {
 
     fun decode(base64: String): Bitmap?
 
-    fun encode(bitmap: Bitmap): String
+    fun encode(bitmap: Bitmap?): String
 }

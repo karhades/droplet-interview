@@ -7,6 +7,7 @@ class UserMapper {
 
     fun map(localUser: LocalUser): User {
         return User(
+            id = localUser.id,
             firstName = localUser.firstName,
             lastName = localUser.lastName,
             email = localUser.email,

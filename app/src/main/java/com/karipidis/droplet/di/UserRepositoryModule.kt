@@ -8,9 +8,10 @@ import com.google.gson.GsonBuilder
 import com.karipidis.droplet.data.UserRepositoryImpl
 import com.karipidis.droplet.data.local.UserDao
 import com.karipidis.droplet.data.local.UserDatabase
-import com.karipidis.droplet.data.remote.UserApi
 import com.karipidis.droplet.data.mappers.LocalUserMapper
+import com.karipidis.droplet.data.mappers.RemoteUserMapper
 import com.karipidis.droplet.data.mappers.UserMapper
+import com.karipidis.droplet.data.remote.UserApi
 import com.karipidis.droplet.domain.repositories.UserRepository
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -23,7 +24,7 @@ private const val BASE_URL = "https://us-central1-test-project-mc-46908.cloudfun
 private const val DATABASE_NAME = "users.db"
 
 val userRepositoryModule = module {
-    single { provideUserRepository(get(), get(), get(), get(), get()) }
+    single { provideUserRepository(get(), get(), get(), get(), get(), get()) }
     single { provideFirebaseAuth() }
     single { provideRetrofit(get(), get()) }
     single { provideOkHttpClient(get()) }
@@ -34,6 +35,7 @@ val userRepositoryModule = module {
     single { provideUserDatabase(get()) }
     single { provideUserDao(get()) }
     single { provideLocalUserMapper() }
+    single { provideRemoteUserMapper() }
 }
 
 private fun provideUserRepository(
@@ -41,9 +43,17 @@ private fun provideUserRepository(
     userApi: UserApi,
     userMapper: UserMapper,
     userDao: UserDao,
-    localUserMapper: LocalUserMapper
+    localUserMapper: LocalUserMapper,
+    remoteUserMapper: RemoteUserMapper
 ): UserRepository {
-    return UserRepositoryImpl(firebaseAuth, userApi, userMapper, userDao, localUserMapper)
+    return UserRepositoryImpl(
+        firebaseAuth,
+        userApi,
+        userMapper,
+        userDao,
+        localUserMapper,
+        remoteUserMapper
+    )
 }
 
 private fun provideFirebaseAuth(): FirebaseAuth {
@@ -97,4 +107,8 @@ private fun provideUserDao(userDatabase: UserDatabase): UserDao {
 
 private fun provideLocalUserMapper(): LocalUserMapper {
     return LocalUserMapper()
+}
+
+private fun provideRemoteUserMapper(): RemoteUserMapper {
+    return RemoteUserMapper()
 }

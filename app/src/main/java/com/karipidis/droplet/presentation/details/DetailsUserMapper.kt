@@ -6,6 +6,7 @@ class DetailsUserMapper(private val imageEncoder: ImageEncoder) {
 
     fun map(user: User): DetailsUser {
         return DetailsUser(
+            id = user.id,
             avatar = imageEncoder.decode(user.avatar),
             firstName = user.firstName,
             lastName = user.lastName,

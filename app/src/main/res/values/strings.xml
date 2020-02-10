@@ -10,4 +10,10 @@
     <string name="last_name">Last name</string>
     <string name="email">Email</string>
     <string name="error_get_user">Cannot load user</string>
+    <string name="save">Save</string>
+    <string name="error_update_user">Cannot update user</string>
+    <string name="update_user_success">Successfully updated</string>
+    <string name="invalid_first_name">Invalid first name</string>
+    <string name="invalid_last_name">Invalid last name</string>
+    <string name="invalid_email">Invalid email</string>
 </resources>

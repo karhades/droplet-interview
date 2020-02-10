@@ -13,9 +13,9 @@ class ImageEncoderImpl : ImageEncoder {
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     }
 
-    override fun encode(bitmap: Bitmap): String {
+    override fun encode(bitmap: Bitmap?): String {
         val outputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        bitmap?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
         return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
     }
 }

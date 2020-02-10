@@ -9,6 +9,7 @@ import com.karipidis.droplet.R
 import com.karipidis.droplet.domain.entities.Result
 import com.karipidis.droplet.domain.entities.User
 import com.karipidis.droplet.domain.usecases.GetUserUseCase
+import com.karipidis.droplet.domain.usecases.UpdateUserUseCase
 import com.karipidis.droplet.presentation.MainCoroutineRule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -40,10 +41,22 @@ class DetailsViewModelTest {
     @MockK
     private lateinit var contentResolver: ContentResolver
 
+    @MockK
+    private lateinit var updateUserUseCase: UpdateUserUseCase
+
+    @MockK
+    private lateinit var userMapper: UserMapper
+
     @Before
     fun setup() {
         MockKAnnotations.init(this, relaxUnitFun = false)
-        viewModel = DetailsViewModel(getUserUseCase, detailsUserMapper, contentResolver)
+        viewModel = DetailsViewModel(
+            getUserUseCase,
+            detailsUserMapper,
+            contentResolver,
+            updateUserUseCase,
+            userMapper
+        )
     }
 
     @Test
@@ -58,6 +71,7 @@ class DetailsViewModelTest {
     @Test
     fun `getUser emits detailsUser when result is success`() {
         val user = User(
+            id = USER_ID,
             avatar = "avatar",
             firstName = "firstName",
             lastName = "lastName",
@@ -65,6 +79,7 @@ class DetailsViewModelTest {
         )
         val result = Result.Success(user)
         val detailsUser = DetailsUser(
+            id = USER_ID,
             avatar = null,
             firstName = "firstName",
             lastName = "lastName",
@@ -76,6 +91,54 @@ class DetailsViewModelTest {
         viewModel.getUser(USER_ID)
 
         assertThat(LiveDataTest.getValue(viewModel.detailsUser)).isEqualTo(detailsUser)
+    }
+
+    @Test
+    fun `updateUser emits message when result is error`() {
+        val user = User(
+            id = USER_ID,
+            avatar = "avatar",
+            firstName = "firstName",
+            lastName = "lastName",
+            email = "email"
+        )
+        coEvery { updateUserUseCase(user) } returns Result.Error(Throwable())
+        val detailsUser = DetailsUser(
+            id = USER_ID,
+            avatar = null,
+            firstName = "firstName",
+            lastName = "lastName",
+            email = "email"
+        )
+        every { userMapper.map(detailsUser) } returns user
+
+        viewModel.updateUser(detailsUser)
+
+        assertThat(LiveDataTest.getValue(viewModel.message)).isEqualTo(R.string.error_update_user)
+    }
+
+    @Test
+    fun `updateUser emits message when result is success`() {
+        val user = User(
+            id = USER_ID,
+            avatar = "avatar",
+            firstName = "firstName",
+            lastName = "lastName",
+            email = "email"
+        )
+        coEvery { updateUserUseCase(user) } returns Result.Success(Unit)
+        val detailsUser = DetailsUser(
+            id = USER_ID,
+            avatar = null,
+            firstName = "firstName",
+            lastName = "lastName",
+            email = "email"
+        )
+        every { userMapper.map(detailsUser) } returns user
+
+        viewModel.updateUser(detailsUser)
+
+        assertThat(LiveDataTest.getValue(viewModel.message)).isEqualTo(R.string.update_user_success)
     }
 
     companion object {

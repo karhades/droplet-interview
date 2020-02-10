@@ -7,4 +7,6 @@ interface UserRepository {
     val userId: String?
 
     suspend fun getUser(userId: String): User
+
+    suspend fun updateUser(user: User)
 }

@@ -3,6 +3,7 @@ package com.karipidis.droplet.data
 import com.google.firebase.auth.FirebaseAuth
 import com.karipidis.droplet.data.local.UserDao
 import com.karipidis.droplet.data.mappers.LocalUserMapper
+import com.karipidis.droplet.data.mappers.RemoteUserMapper
 import com.karipidis.droplet.data.mappers.UserMapper
 import com.karipidis.droplet.data.remote.UserApi
 import com.karipidis.droplet.domain.entities.User
@@ -13,7 +14,8 @@ class UserRepositoryImpl(
     private val userApi: UserApi,
     private val userMapper: UserMapper,
     private val userDao: UserDao,
-    private val localUserMapper: LocalUserMapper
+    private val localUserMapper: LocalUserMapper,
+    private val remoteUserMapper: RemoteUserMapper
 ) : UserRepository {
 
     override val userId: String?
@@ -33,5 +35,12 @@ class UserRepositoryImpl(
         } else {
             userMapper.map(cachedUser)
         }
+    }
+
+    override suspend fun updateUser(user: User) {
+        val remoteUser = remoteUserMapper.map(user)
+        userApi.updateUser(remoteUser)
+        val localUser = localUserMapper.map(remoteUser)
+        userDao.addUser(localUser)
     }
 }
