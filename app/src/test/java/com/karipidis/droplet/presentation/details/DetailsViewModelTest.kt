@@ -1,5 +1,6 @@
 package com.karipidis.droplet.presentation.details
 
+import android.content.ContentResolver
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
@@ -36,10 +37,13 @@ class DetailsViewModelTest {
     @MockK
     private lateinit var detailsUserMapper: DetailsUserMapper
 
+    @MockK
+    private lateinit var contentResolver: ContentResolver
+
     @Before
     fun setup() {
         MockKAnnotations.init(this, relaxUnitFun = false)
-        viewModel = DetailsViewModel(getUserUseCase, detailsUserMapper)
+        viewModel = DetailsViewModel(getUserUseCase, detailsUserMapper, contentResolver)
     }
 
     @Test
