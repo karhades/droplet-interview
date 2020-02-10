@@ -9,6 +9,7 @@ import com.karipidis.droplet.R
 import com.karipidis.droplet.domain.entities.Result
 import com.karipidis.droplet.domain.entities.User
 import com.karipidis.droplet.domain.usecases.GetUserUseCase
+import com.karipidis.droplet.domain.usecases.LogoutUseCase
 import com.karipidis.droplet.domain.usecases.UpdateUserUseCase
 import com.karipidis.droplet.presentation.MainCoroutineRule
 import io.mockk.MockKAnnotations
@@ -47,6 +48,9 @@ class DetailsViewModelTest {
     @MockK
     private lateinit var userMapper: UserMapper
 
+    @MockK
+    private lateinit var logoutUseCase: LogoutUseCase
+
     @Before
     fun setup() {
         MockKAnnotations.init(this, relaxUnitFun = false)
@@ -55,7 +59,8 @@ class DetailsViewModelTest {
             detailsUserMapper,
             contentResolver,
             updateUserUseCase,
-            userMapper
+            userMapper,
+            logoutUseCase
         )
     }
 

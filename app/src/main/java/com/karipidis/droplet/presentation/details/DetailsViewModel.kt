@@ -14,6 +14,7 @@ import com.karipidis.droplet.domain.entities.InvalidFirstNameException
 import com.karipidis.droplet.domain.entities.InvalidLastNameException
 import com.karipidis.droplet.domain.entities.Result
 import com.karipidis.droplet.domain.usecases.GetUserUseCase
+import com.karipidis.droplet.domain.usecases.LogoutUseCase
 import com.karipidis.droplet.domain.usecases.UpdateUserUseCase
 import kotlinx.coroutines.launch
 
@@ -22,7 +23,8 @@ class DetailsViewModel(
     private val detailsUserMapper: DetailsUserMapper,
     private val contentResolver: ContentResolver,
     private val updateUserUseCase: UpdateUserUseCase,
-    private val userMapper: UserMapper
+    private val userMapper: UserMapper,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
     private val _detailsUser = MutableLiveData<DetailsUser>()
@@ -45,6 +47,9 @@ class DetailsViewModel(
 
     private val _invalidEmailName = MutableLiveData<Unit>()
     val invalidEmailName: LiveData<Unit> = _invalidEmailName
+
+    private val _logout = MutableLiveData<Unit>()
+    val logout: LiveData<Unit> = _logout
 
     fun getUser(userId: String) {
         viewModelScope.launch {
@@ -85,6 +90,13 @@ class DetailsViewModel(
             is InvalidLastNameException -> _invalidLastName.value = Unit
             is InvalidEmailNameException -> _invalidEmailName.value = Unit
             else -> _message.value = R.string.error_update_user
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            logoutUseCase()
+            _logout.value = Unit
         }
     }
 }

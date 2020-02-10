@@ -43,4 +43,8 @@ class UserRepositoryImpl(
         val localUser = localUserMapper.map(remoteUser)
         userDao.addUser(localUser)
     }
+
+    override suspend fun logout() {
+        userDao.deleteUsers()
+    }
 }

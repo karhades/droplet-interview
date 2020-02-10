@@ -26,4 +26,8 @@ class FakeUserRepository : UserRepository {
         if (delayUpdateUser) delay(500)
         require(!throwUpdateUserError)
     }
+
+    override suspend fun logout() {
+        // Empty
+    }
 }

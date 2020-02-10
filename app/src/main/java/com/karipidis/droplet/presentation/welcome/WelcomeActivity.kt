@@ -1,5 +1,6 @@
 package com.karipidis.droplet.presentation.welcome
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.StringRes
@@ -69,5 +70,9 @@ class WelcomeActivity : AppCompatActivity() {
     companion object {
 
         private const val REQUEST_LOGIN = 1
+
+        fun newIntent(context: Context): Intent {
+            return Intent(context, WelcomeActivity::class.java)
+        }
     }
 }

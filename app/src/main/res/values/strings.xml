@@ -16,4 +16,5 @@
     <string name="invalid_first_name">Invalid first name</string>
     <string name="invalid_last_name">Invalid last name</string>
     <string name="invalid_email">Invalid email</string>
+    <string name="logout">logout</string>
 </resources>

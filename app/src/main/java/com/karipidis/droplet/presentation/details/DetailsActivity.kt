@@ -13,8 +13,10 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
+import com.firebase.ui.auth.AuthUI
 import com.google.android.material.snackbar.Snackbar
 import com.karipidis.droplet.R
+import com.karipidis.droplet.presentation.welcome.WelcomeActivity
 import kotlinx.android.synthetic.main.activity_details.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -28,6 +30,7 @@ class DetailsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_details)
         pick_avatar_image_view.setOnClickListener { pickImage() }
         save_button.setOnClickListener { updateUser() }
+        logout_button.setOnClickListener { viewModel.logout() }
         observeViewModel()
         userId = intent.getStringExtra(EXTRA_USER_ID) ?: ""
         viewModel.getUser(userId)
@@ -67,6 +70,7 @@ class DetailsActivity : AppCompatActivity() {
             invalidFirstName.observe(owner, Observer { showFirstNameError() })
             invalidLastName.observe(owner, Observer { showLastNameError() })
             invalidEmailName.observe(owner, Observer { showEmailError() })
+            logout.observe(owner, Observer { logoutUser() })
         }
     }
 
@@ -104,6 +108,12 @@ class DetailsActivity : AppCompatActivity() {
 
     private fun showEmailError() {
         email_edit_text.error = getString(R.string.invalid_email)
+    }
+
+    private fun logoutUser() {
+        AuthUI.getInstance()
+            .signOut(this)
+            .addOnCompleteListener { startActivity(WelcomeActivity.newIntent(this)) }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

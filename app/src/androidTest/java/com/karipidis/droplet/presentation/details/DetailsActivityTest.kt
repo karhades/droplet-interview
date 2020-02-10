@@ -1,8 +1,14 @@
 package com.karipidis.droplet.presentation.details
 
+import android.app.Activity
+import android.app.Instrumentation
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.intent.matcher.IntentMatchers.anyIntent
 import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -14,6 +20,7 @@ import com.karipidis.droplet.di.detailsModule
 import com.karipidis.droplet.di.userRepositoryModule
 import com.karipidis.droplet.domain.entities.User
 import com.karipidis.droplet.domain.repositories.UserRepository
+import com.karipidis.droplet.presentation.welcome.WelcomeActivity
 import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Before
@@ -135,6 +142,19 @@ class DetailsActivityTest : KoinTest {
         onView(withId(R.id.save_button)).perform(click())
 
         onView(withId(R.id.save_button)).check(matches(not(isEnabled())))
+    }
+
+    @Test
+    fun startsWelcomeScreen_whenLogoutIsPressed() {
+        val intent = DetailsActivity.newIntent(context, "user_id")
+        intentsTestRule.launchActivity(intent)
+
+        // Stub intent
+        val intentResult = Instrumentation.ActivityResult(Activity.RESULT_OK, intent)
+        Intents.intending(anyIntent()).respondWith(intentResult)
+        onView(withId(R.id.logout_button)).perform(click())
+
+        intended(IntentMatchers.hasComponent(WelcomeActivity::class.java.name))
     }
 
     private fun getBase64StringFromAssets(): String {
