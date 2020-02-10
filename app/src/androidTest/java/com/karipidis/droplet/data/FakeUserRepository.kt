@@ -1,5 +1,6 @@
 package com.karipidis.droplet.data
 
+import com.karipidis.droplet.domain.entities.User
 import com.karipidis.droplet.domain.repositories.UserRepository
 
 class FakeUserRepository : UserRepository {
@@ -8,4 +9,13 @@ class FakeUserRepository : UserRepository {
 
     override val userId: String?
         get() = _userId
+
+    var user: User = User("", "", "", "")
+
+    var throwGetUserError: Boolean = false
+
+    override suspend fun getUser(userId: String): User {
+        require(!throwGetUserError)
+        return user
+    }
 }

@@ -5,4 +5,9 @@
     <string name="login_canceled">Login canceled</string>
     <string name="no_internet">No internet connection</string>
     <string name="login_failed">Login failed</string>
+    <string name="details_description">Please provide your information</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="email">Email</string>
+    <string name="error_get_user">Cannot load user</string>
 </resources>
