@@ -8,17 +8,18 @@ import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.karipidis.droplet.R
 import com.karipidis.droplet.domain.usecases.GetUserIdUseCase
+import com.karipidis.droplet.presentation.details.toSingleEvent
 
 class WelcomeViewModel(private val getUserIdUseCase: GetUserIdUseCase) : ViewModel() {
 
     private val _startLogin = MutableLiveData<Unit>()
-    val startLogin: LiveData<Unit> = _startLogin
+    val startLogin: LiveData<Unit> = _startLogin.toSingleEvent()
 
     private val _startDetails = MutableLiveData<String>()
-    val startDetails: LiveData<String> = _startDetails
+    val startDetails: LiveData<String> = _startDetails.toSingleEvent()
 
     private val _message = MutableLiveData<Int>()
-    val message: LiveData<Int> = _message
+    val message: LiveData<Int> = _message.toSingleEvent()
 
     fun handleEntrance() {
         val userId = getUserIdUseCase()

@@ -21,7 +21,7 @@ class DetailsViewModel(
     val loading: LiveData<Boolean> = _loading
 
     private val _message = MutableLiveData<Int>()
-    val message: LiveData<Int> = _message
+    val message: LiveData<Int> = _message.toSingleEvent()
 
     fun getUser(userId: String) {
         viewModelScope.launch {
